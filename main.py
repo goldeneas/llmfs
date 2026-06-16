@@ -64,3 +64,11 @@ position_embedding_layer = torch.nn.Embedding(context_size, embedding_dim)
 position_embeddings = position_embedding_layer(torch.arange(context_size))
 
 input_embeddings = token_embeddings + position_embeddings
+
+
+# multiply inputs by its transposed version
+attn_weights = input_embeddings @ input_embeddings.T
+attn_norm_weights = torch.softmax(attn_weights, dim=-1)
+context_vecs = attn_norm_weights @ input_embeddings
+
+print(f"Calculated, simplified context vectors: {context_vecs}")
