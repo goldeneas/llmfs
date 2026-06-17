@@ -15,9 +15,13 @@ class SelfAttention(nn.Module):
         values = self.w_value(inputs)
 
         attn_scores = queries @ keys.transpose(-1, -2)
+
+        context_length = keys.shape[-2]
+        causal_mask = torch.triu(torch.ones(context_length, context_length), diagonal=1)
+        causal_attn_scores = attn_scores.masked_fill(causal_mask.bool(), -torch.inf)
         
         scale = keys.shape[-1] ** 0.5
-        attn_weights = torch.softmax(attn_scores / scale,
+        attn_weights = torch.softmax(causal_attn_scores / scale,
                                      dim=-1)
 
         context_vecs = attn_weights @ values
