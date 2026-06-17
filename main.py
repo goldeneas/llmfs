@@ -4,7 +4,7 @@ import torch
 from importlib.metadata import version
 from torch.utils.data import DataLoader
 
-from attention import SelfAttention
+from attention import MultiHeadAttention
 from dataset import GPTDataset
 
 parser = argparse.ArgumentParser(prog="LLMfs",
@@ -24,7 +24,7 @@ with open(text_path, "r", encoding="utf-8") as f:
 print(f"Using tiktoken v{version('tiktoken')}")
 print(f"Read file {text_path}: {len(raw_text)} characters")
 
-
+# Preprocessing
 context_size = 4
 stride = context_size
 encoding_name = "gpt2"
@@ -34,6 +34,8 @@ drop_last = True
 num_workers = 0
 torch_seed = 123
 embedding_dim = 256
+
+print("[PRE-PROCESSING]")
 print(f"Using context size: {context_size}")
 print(f"Using stride: {stride}")
 print(f"Using encoding: {encoding_name}")
@@ -73,7 +75,26 @@ position_embeddings = position_embedding_layer(torch.arange(context_size))
 
 input_embeddings = token_embeddings + position_embeddings
 
-sa = SelfAttention(256, 256, 4, 0.5)
+# Attention!
+dim_in = 256
+dim_out = 256
+context_length = 4
+dropout = 0.5
+num_heads = 2
+
+print("[ATTENTION]")
+print(f"Using dim_in: {dim_in}")
+print(f"Using dim_out: {dim_out}")
+print(f"Using context_length: {context_length}")
+print(f"Using dropout: {dropout}")
+print(f"Using num_heads: {num_heads}")
+
+sa = MultiHeadAttention(dim_in=dim_in,
+                        dim_out=dim_out,
+                        context_length=context_length,
+                        dropout=dropout,
+                        num_heads=num_heads)
+
 context_vecs = sa.forward(input_embeddings)
 
-print(f"Calculated, simplified context vectors: {context_vecs}")
+print(f"Context vecs: {context_vecs}")
