@@ -73,7 +73,7 @@ position_embeddings = position_embedding_layer(torch.arange(context_size))
 
 input_embeddings = token_embeddings + position_embeddings
 
-sa = SelfAttention(256, 256)
+sa = SelfAttention(256, 256, 4, 0.5)
 context_vecs = sa.forward(input_embeddings)
 
 print(f"Calculated, simplified context vectors: {context_vecs}")
