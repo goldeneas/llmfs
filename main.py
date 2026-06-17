@@ -4,6 +4,7 @@ import torch
 from importlib.metadata import version
 from torch.utils.data import DataLoader
 
+from attention import SelfAttention
 from dataset import GPTDataset
 
 parser = argparse.ArgumentParser(prog="LLMfs",
@@ -72,9 +73,7 @@ position_embeddings = position_embedding_layer(torch.arange(context_size))
 
 input_embeddings = token_embeddings + position_embeddings
 
-# multiply inputs by its transposed version
-attn_weights = input_embeddings @ input_embeddings.transpose(-1, -2)
-attn_norm_weights = torch.softmax(attn_weights, dim=-1)
-context_vecs = attn_norm_weights @ input_embeddings
+sa = SelfAttention(256, 256)
+context_vecs = sa.forward(input_embeddings)
 
 print(f"Calculated, simplified context vectors: {context_vecs}")
