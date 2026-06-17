@@ -1,5 +1,7 @@
 import torch
-from torch import nn
+from torch import dropout, nn
+from attention import MultiHeadAttention
+from feed_forward import FeedForward
 
 class GPTModel(nn.Module):
     def __init__(self, cfg):
@@ -41,7 +43,34 @@ class GPTTransformerBlock(nn.Module):
     def __init__(self, cfg):
         super().__init__()
 
+        embedding_len = cfg["embedding_len"]
+        context_len = cfg["context_len"]
+        dropout = cfg["dropout"]
+        num_heads = cfg["num_heads"]
+
+        self.attention = MultiHeadAttention(dim_in=embedding_len,
+                        dim_out=embedding_len,
+                        context_len=context_len,
+                        dropout=dropout,
+                        num_heads=num_heads)
+        self.feed_forward = FeedForward(cfg)
+        self.norm1 = GPTLayerNorm(embedding_len)
+        self.norm2 = GPTLayerNorm(embedding_len)
+        self.dropout = nn.Dropout(dropout)
+
     def forward(self, x):
+        shortcut = x
+        x = self.norm1.forward(x)
+        x = self.attention.forward(x)
+        x = self.dropout(x)
+        x = x + shortcut
+
+        shortcut = x
+        x = self.norm2.forward(x)
+        x = self.feed_forward.forward(x)
+        x = self.dropout(x)
+        x = x + shortcut
+
         return x
 
 

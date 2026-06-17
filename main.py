@@ -91,7 +91,7 @@ print(f"Using num_heads: {num_heads}")
 
 sa = MultiHeadAttention(dim_in=dim_in,
                         dim_out=dim_out,
-                        context_length=context_length,
+                        context_len=context_length,
                         dropout=dropout,
                         num_heads=num_heads)
 

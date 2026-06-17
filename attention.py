@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 
 class MultiHeadAttention(nn.Module):
-    def __init__(self, dim_in, dim_out, context_length, dropout, num_heads, qkv_bias=False):
+    def __init__(self, dim_in, dim_out, context_len, dropout, num_heads, qkv_bias=False):
         super().__init__()
 
         assert(dim_out % num_heads == 0, "dim_out % num_heads != 0")
@@ -22,7 +22,7 @@ class MultiHeadAttention(nn.Module):
 
         self.register_buffer(
                 "causal_mask",
-                torch.triu(torch.ones(context_length, context_length), diagonal=1)
+                torch.triu(torch.ones(context_len, context_len), diagonal=1)
             )
 
     def forward(self, inputs):
