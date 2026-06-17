@@ -56,6 +56,13 @@ inputs, targets = next(data_iter)
 
 torch.manual_seed(torch_seed)
 
+# Pre-processing pipeline
+# Get input text
+# Process input text into tokens
+# Process tokens into embeddings (random values at first) -> token_embeddings
+# Add position encoding to token embeddings -> position_embeddings
+# Add attention weights to position_embeddings -> context_vectors
+
 vocab_size = tokenizer.max_token_value + 1
 token_embedding_layer = torch.nn.Embedding(vocab_size, embedding_dim)
 token_embeddings = token_embedding_layer(inputs)
